@@ -1,10 +1,14 @@
-available_screen_sizes = [(400, 600),(200, 300),(100, 150)]
+import random
+
+available_screen_sizes = [[400, 600],[200, 300],[100, 150]]
 available_font_title_sizes = [80, 40, 20]
 available_font_options_sizes = [40, 20, 10]
 available_options_space = [60, 30, 15]
 
 select_conf = 0
 selected_option = 0
+speed = 6
+
 print(selected_option)
 options = ["Start", "Settings", "Exit"]
 
@@ -47,7 +51,7 @@ def prepare_title(pygame_instance, screen):
     screen_size = get_screen_size()
     x = screen_size[0]/2
     y= screen_size[1]/4
-    show_text("Crash Cars!", font_title,[255,255,255], screen, x, y)
+    show_text("Space impact!", font_title,[255,255,255], screen, x, y)
 
 def prepare_options(pygame_instance, screen):
     _, font_options = get_fonts(pygame_instance)
@@ -104,3 +108,53 @@ def evaluate_selection(pygame_instance, show_main_menu, show_setting, start_game
             start_game = False
 
     return show_main_menu, show_setting, start_game
+
+
+#Juego
+
+def generate_stars():
+    stars_coord = []
+    for i in range(60):
+        x = random.randint(0, get_screen_size()[0])
+        y = random.randint(0, get_screen_size()[1])
+        stars_coord.append([x, y])
+
+    return stars_coord
+
+def animate_starts(pygame_instance, stars_coord, screen):
+    for coord in stars_coord:
+        pygame_instance.draw.circle(screen, [255,255,255], (coord[0], coord[1]), 2)
+
+        if coord[1]>get_screen_size()[1]:
+            coord[1] = 0
+        
+        else:
+            coord[1] += 1
+
+def spam_player(image_player, screen, coord):
+    return screen.blit(image_player, coord)
+
+
+def move_player(pygame_instance, coord):
+    keys = pygame_instance.key.get_pressed()
+
+    if keys[pygame_instance.K_UP]:
+        if coord[1] > 0:
+            coord[1] -= speed
+
+    if keys[pygame_instance.K_DOWN]:
+        print(coord[1], get_screen_size()[1])
+        if coord[1] < get_screen_size()[1]:
+            coord[1] += speed
+
+    if keys[pygame_instance.K_LEFT]:
+        if coord[0] > 0:
+            coord[0] -= speed
+
+    if keys[pygame_instance.K_RIGHT]:
+        print(coord[0], get_screen_size()[0])
+        if coord[0] < get_screen_size()[0]:
+            coord[0] += speed
+
+    return coord
+        
